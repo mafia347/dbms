@@ -1,0 +1,45 @@
+-- Create the database
+CREATE DATABASE OrderDatabase;
+USE OrderDatabase;
+
+-- Create tables
+CREATE TABLE SALESMAN (
+Salesman_id INT PRIMARY KEY,
+Name VARCHAR(255),
+City VARCHAR(255),
+Commission DECIMAL(5, 2)
+);
+
+CREATE TABLE CUSTOMER (
+Customer_id INT PRIMARY KEY,
+Cust_Name VARCHAR(255),
+City VARCHAR(255),
+Grade INT,
+Salesman_id INT,
+FOREIGN KEY (Salesman_id) REFERENCES SALESMAN(Salesman_id)
+);
+
+CREATE TABLE ORDERS (
+Ord_No INT PRIMARY KEY,
+Purchase_Amt DECIMAL(10, 2),
+Ord_Date DATE,
+Customer_id INT,
+Salesman_id INT,
+FOREIGN KEY (Customer_id) REFERENCES CUSTOMER(Customer_id),
+FOREIGN KEY (Salesman_id) REFERENCES SALESMAN(Salesman_id)
+);
+
+-- Insert sample data with random values
+-- For simplicity, I'm using basic random values. You may need to customize these.
+INSERT INTO SALESMAN VALUES (1, 'John Doe', 'New York', 0.10);
+INSERT INTO SALESMAN VALUES (2, 'Jane Smith', 'Chicago', 0.15);
+INSERT INTO SALESMAN VALUES (3, 'Bob Johnson', 'Los Angeles', 0.12);
+
+INSERT INTO CUSTOMER VALUES (101, 'Customer1', 'New York', 1, 1);
+INSERT INTO CUSTOMER VALUES (102, 'Customer2', 'Chicago', 2, 2);
+INSERT INTO CUSTOMER VALUES (103, 'Customer3', 'Los Angeles', 3, 3);
+
+-- Random dates for simplicity
+INSERT INTO ORDERS VALUES (1001, 500.00, '2023-01-15', 101, 1);
+INSERT INTO ORDERS VALUES (1002, 750.00, '2023-02-20', 102, 2);
+INSERT INTO ORDERS VALUES (1003, 1000.00, '2023-03-25', 103, 3);

@@ -1,0 +1,44 @@
+-- SQL Queries
+
+-- 1. Make a list of all project numbers for projects that involve an employee whose last name is ‘Scott’,
+-- either as a worker or as a manager of the department that controls the project.
+SELECT DISTINCT P.PNo
+FROM PROJECT P
+JOIN WORKS_ON WO ON P.PNo = WO.PNo
+JOIN EMPLOYEE E ON WO.SSN = E.SSN
+WHERE E.Name LIKE '%Scott%' OR E.SSN IN (SELECT MgrSSN FROM DEPARTMENT WHERE DNo = P.DNo);
+
+-- 2. Show the resulting salaries if every employee working on the ‘IoT’ project is given a 10 percent raise.
+UPDATE EMPLOYEE
+SET Salary = Salary * 1.1
+WHERE SSN IN (SELECT SSN FROM WORKS_ON WHERE PNo = (SELECT PNo FROM PROJECT WHERE PName = 'IoT'));
+
+-- 3. Find the sum of the salaries of all employees of the ‘Accounts’ department,
+-- as well as the maximum salary, the minimum salary, and the average salary in this department.
+SELECT SUM(E.Salary) AS Total_Salary, MAX(E.Salary) AS Max_Salary, MIN(E.Salary) AS Min_Salary, AVG(E.Salary) AS Avg_Salary
+FROM EMPLOYEE E
+JOIN DEPARTMENT D ON E.DNo = D.DNo
+WHERE D.DName = 'Accounts';
+
+-- 4. Retrieve the name of each employee who works on all the projects controlled by department number 5 (use NOT EXISTS operator).
+SELECT E.Name
+FROM EMPLOYEE E
+WHERE NOT EXISTS (
+SELECT P.PNo
+FROM PROJECT P
+WHERE P.DNo = 5
+AND NOT EXISTS (
+SELECT W.SSN
+FROM WORKS_ON W
+WHERE W.PNo = P.PNo AND W.SSN = E.SSN
+)
+);
+
+-- 5. For each department that has more than five employees, retrieve the department number and the number
+-- of its employees who are making more than Rs. 6,00,000.
+SELECT D.DNo, COUNT(E.SSN) AS Num_Employees_Above_600000
+FROM DEPARTMENT D
+JOIN EMPLOYEE E ON D.DNo = E.DNo
+WHERE E.Salary > 600000
+GROUP BY D.DNo
+HAVING COUNT(E.SSN) > 5;

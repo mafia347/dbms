@@ -1,0 +1,52 @@
+1. Count the customers with grades above Bangalore’s average:
+
+SELECT COUNT(*) AS Above_Avg_Grades_Customers
+FROM CUSTOMER
+WHERE Grade > (SELECT AVG(Grade) FROM CUSTOMER WHERE City = 'Bangalore');
+
+
+
+2. Find the name and numbers of all salesmen who had more than one customer:
+
+SELECT S.Name, S.Salesman_id
+FROM SALESMAN S
+JOIN CUSTOMER C ON S.Salesman_id = C.Salesman_id
+GROUP BY S.Salesman_id, S.Name
+HAVING COUNT(C.Customer_id) > 1;
+
+
+
+3. List all the salesmen and indicate those who have and do not have customers in their cities (Use UNION operation):
+
+SELECT S.Salesman_id, S.Name, 'Has Customers' AS Status
+FROM SALESMAN S
+WHERE S.Salesman_id IN (SELECT DISTINCT Salesman_id FROM CUSTOMER)
+
+UNION
+
+SELECT S.Salesman_id, S.Name, 'No Customers' AS Status
+FROM SALESMAN S
+WHERE S.Salesman_id NOT IN (SELECT DISTINCT Salesman_id FROM CUSTOMER);
+
+
+
+4. Create a view that finds the salesman who has the customer with the highest order of a day:
+
+CREATE VIEW MaxOrderSalesmanView AS
+SELECT O.Salesman_id, MAX(O.Purchase_Amt) AS Max_Purchase_Amt
+FROM ORDERS O
+GROUP BY O.Salesman_id;
+
+
+
+5. Demonstrate the DELETE operation by removing the salesman with id 1000. All his orders must also be deleted:
+
+-- Assuming you want to delete a salesman with Salesman_id = 1000
+DECLARE @deletedSalesmanId INT;
+SET @deletedSalesmanId = 1000;
+
+-- Delete from ORDERS table
+DELETE FROM ORDERS WHERE Salesman_id = @deletedSalesmanId;
+
+-- Finally, delete from SALESMAN table
+DELETE FROM SALESMAN WHERE Salesman_id = @deletedSalesmanId;

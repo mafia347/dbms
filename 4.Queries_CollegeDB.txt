@@ -1,0 +1,49 @@
+-- SQL Queries
+
+-- 1. List all the student details studying in the fourth semester ‘C’ section.
+SELECT S.*
+FROM STUDENT S
+JOIN CLASS C ON S.USN = C.USN
+JOIN SEMSEC SS ON C.SSID = SS.SSID
+WHERE SS.Sem = 4 AND SS.Sec = 'C';
+
+-- 2. Compute the total number of male and female students in each semester and in each section.
+SELECT SS.Sem, SS.Sec, S.Gender, COUNT(*) AS Total_Students
+FROM STUDENT S
+JOIN CLASS C ON S.USN = C.USN
+JOIN SEMSEC SS ON C.SSID = SS.SSID
+GROUP BY SS.Sem, SS.Sec, S.Gender;
+
+-- 3. Create a view of Test1 marks of student USN ‘1BI15CS101’ in all Courses.
+CREATE VIEW Test1MarksView AS
+SELECT Subcode, Test1
+FROM IAMARKS
+WHERE USN = '1BI15CS101';
+
+-- 4. Calculate the FinalIA (average of best two test marks) and update the corresponding table for all students.
+-- Assuming FinalIA is NULL initially and it's calculated as the average of the two highest test marks.
+UPDATE IAMARKS
+SET FinalIA = (
+SELECT AVG(Top2Marks)
+FROM (
+SELECT TOP 2 Test1
+FROM IAMARKS IAM
+WHERE IAM.USN = IAMARKS.USN AND IAM.Subcode = IAMARKS.Subcode
+ORDER BY Test1 DESC
+) AS Top2TestMarks
+)
+WHERE FinalIA IS NULL;
+
+-- 5. Categorize students based on the given criterion only for 8th semester A, B, and C section students.
+SELECT S.USN, S.SName, SS.Sem, SS.Sec,
+CASE
+WHEN IAM.FinalIA >= 17 AND IAM.FinalIA <= 20 THEN 'Outstanding'
+WHEN IAM.FinalIA >= 12 AND IAM.FinalIA <= 16 THEN 'Average'
+WHEN IAM.FinalIA < 12 THEN 'Weak'
+ELSE NULL
+END AS CAT
+FROM STUDENT S
+JOIN CLASS C ON S.USN = C.USN
+JOIN SEMSEC SS ON C.SSID = SS.SSID
+JOIN IAMARKS IAM ON S.USN = IAM.USN AND C.SSID = IAM.SSID
+WHERE SS.Sem = 8 AND SS.Sec IN ('A', 'B', 'C');

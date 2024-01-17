@@ -1,0 +1,63 @@
+1. Retrieve details of all books in the library:
+
+SELECT B.Book_id, B.Title, B.Publisher_Name, B.Pub_Year, BA.Author_Name, BC.No_of_Copies, LP.Programme_Name
+FROM BOOK B
+JOIN BOOK_AUTHORS BA ON B.Book_id = BA.Book_id
+JOIN BOOK_COPIES BC ON B.Book_id = BC.Book_id
+JOIN LIBRARY_PROGRAMME LP ON BC.Programme_id = LP.Programme_id;
+
+
+
+2. Get the particulars of borrowers who have borrowed more than 3 books, but from Jan 2017 to Jun 2017:
+
+SELECT BL.Card_No, COUNT(*) AS Books_Borrowed
+FROM BOOK_LENDING BL
+WHERE BL.Date_Out BETWEEN '2017-01-01' AND '2017-06-30'
+GROUP BY BL.Card_No
+HAVING COUNT(*) > 3;
+
+
+
+3. Delete a book in BOOK table. Update the contents of other tables:
+
+-- Assuming you want to delete a book with Book_id = 1
+DECLARE @deletedBookId INT;
+SET @deletedBookId = 1;
+
+-- Delete from BOOK_AUTHORS table
+DELETE FROM BOOK_AUTHORS WHERE Book_id = @deletedBookId;
+
+-- Delete from BOOK_COPIES table
+DELETE FROM BOOK_COPIES WHERE Book_id = @deletedBookId;
+
+-- Delete from BOOK_LENDING table
+DELETE FROM BOOK_LENDING WHERE Book_id = @deletedBookId;
+
+-- Finally, delete from BOOK table
+DELETE FROM BOOK WHERE Book_id = @deletedBookId;
+
+
+
+4. Partition the BOOK table based on the year of publication:
+
+-- Assuming you want to create partitions based on the Pub_Year column
+CREATE TABLE BOOK_PARTITIONED_BY_YEAR
+PARTITION BY RANGE (Pub_Year) (
+PARTITION p0 VALUES LESS THAN (1990),
+PARTITION p1 VALUES LESS THAN (2000),
+PARTITION p2 VALUES LESS THAN (2010),
+PARTITION p3 VALUES LESS THAN MAXVALUE
+);
+
+-- To demonstrate, you can use a simple query like:
+SELECT * FROM BOOK_PARTITIONED_BY_YEAR PARTITION (p0);
+
+
+
+5. Create a view of all books and its number of copies that are currently available in the Library:
+
+CREATE VIEW AVAILABLE_BOOKS_VIEW AS
+SELECT B.Book_id, B.Title, BC.No_of_Copies
+FROM BOOK B
+JOIN BOOK_COPIES BC ON B.Book_id = BC.Book_id
+WHERE BC.No_of_Copies > 0;

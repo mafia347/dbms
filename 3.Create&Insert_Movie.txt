@@ -1,0 +1,61 @@
+-- Create the database
+CREATE DATABASE MovieDatabase;
+USE MovieDatabase;
+
+-- Create tables
+CREATE TABLE ACTOR (
+Act_id INT PRIMARY KEY,
+Act_Name VARCHAR(255),
+Act_Gender VARCHAR(10)
+);
+
+CREATE TABLE DIRECTOR (
+Dir_id INT PRIMARY KEY,
+Dir_Name VARCHAR(255),
+Dir_Phone VARCHAR(20)
+);
+
+CREATE TABLE MOVIES (
+Mov_id INT PRIMARY KEY,
+Mov_Title VARCHAR(255),
+Mov_Year INT,
+Mov_Lang VARCHAR(20),
+Dir_id INT,
+FOREIGN KEY (Dir_id) REFERENCES DIRECTOR(Dir_id)
+);
+
+CREATE TABLE MOVIE_CAST (
+Act_id INT,
+Mov_id INT,
+Role VARCHAR(50),
+PRIMARY KEY (Act_id, Mov_id),
+FOREIGN KEY (Act_id) REFERENCES ACTOR(Act_id),
+FOREIGN KEY (Mov_id) REFERENCES MOVIES(Mov_id)
+);
+
+CREATE TABLE RATING (
+Mov_id INT PRIMARY KEY,
+Rev_Stars INT,
+FOREIGN KEY (Mov_id) REFERENCES MOVIES(Mov_id)
+);
+
+-- Insert sample data with random values
+-- For simplicity, I'm using basic random values. You may need to customize these.
+INSERT INTO DIRECTOR VALUES (1, 'Alfred Hitchcock', '123-456-7890');
+INSERT INTO DIRECTOR VALUES (2, 'Steven Spielberg', '987-654-3210');
+
+INSERT INTO ACTOR VALUES (101, 'Actor1', 'Male');
+INSERT INTO ACTOR VALUES (102, 'Actor2', 'Female');
+INSERT INTO ACTOR VALUES (103, 'Actor3', 'Male');
+
+INSERT INTO MOVIES VALUES (201, 'Movie1', 1995, 'English', 1);
+INSERT INTO MOVIES VALUES (202, 'Movie2', 2005, 'Spanish', 2);
+
+INSERT INTO MOVIE_CAST VALUES (101, 201, 'Lead');
+INSERT INTO MOVIE_CAST VALUES (102, 201, 'Supporting');
+INSERT INTO MOVIE_CAST VALUES (101, 202, 'Lead');
+INSERT INTO MOVIE_CAST VALUES (103, 202, 'Supporting');
+
+INSERT INTO RATING VALUES (201, 4);
+INSERT INTO RATING VALUES (202, 3);
+

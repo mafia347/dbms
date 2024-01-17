@@ -1,0 +1,44 @@
+
+CREATE TABLE BOOK (
+Book_id INT PRIMARY KEY,
+Title VARCHAR(255),
+Publisher_Name VARCHAR(255),
+Pub_Year INT
+);
+
+CREATE TABLE BOOK_AUTHORS (
+Book_id INT,
+Author_Name VARCHAR(255),
+FOREIGN KEY (Book_id) REFERENCES BOOK(Book_id)
+);
+
+CREATE TABLE PUBLISHER (
+Name VARCHAR(255) PRIMARY KEY,
+Address VARCHAR(255),
+Phone VARCHAR(20)
+);
+
+CREATE TABLE BOOK_COPIES (
+Book_id INT,
+Programme_id INT,
+No_of_Copies INT,
+PRIMARY KEY (Book_id, Programme_id),
+FOREIGN KEY (Book_id) REFERENCES BOOK(Book_id)
+);
+
+CREATE TABLE BOOK_LENDING (
+Book_id INT,
+Programme_id INT,
+Card_No INT,
+Date_Out DATE,
+Due_Date DATE,
+PRIMARY KEY (Book_id, Programme_id, Card_No),
+FOREIGN KEY (Book_id, Programme_id) REFERENCES BOOK_COPIES(Book_id, Programme_id)
+);
+
+CREATE TABLE LIBRARY_PROGRAMME (
+Programme_id INT PRIMARY KEY,
+Programme_Name VARCHAR(255),
+Address VARCHAR(255)
+);
+

@@ -41,8 +41,6 @@ GROUP BY O.Salesman_id;
 
 5. Demonstrate the DELETE operation by removing the salesman with id 1000. All his orders must also be deleted:
 
--- Assuming you want to delete a salesman with Salesman_id = 1000
-DECLARE @deletedSalesmanId INT;
 SET @deletedSalesmanId = 1000;
 
 -- Delete from ORDERS table
